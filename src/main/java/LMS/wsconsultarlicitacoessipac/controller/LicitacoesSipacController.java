@@ -5,7 +5,6 @@ import LMS.wsconsultarlicitacoessipac.dto.LicitacaoLidaDto;
 import LMS.wsconsultarlicitacoessipac.dto.LicitacoesSipacDto;
 import LMS.wsconsultarlicitacoessipac.entidade.LicitacoesSipac;
 import LMS.wsconsultarlicitacoessipac.enums.TipoRequisicao;
-import LMS.wsconsultarlicitacoessipac.services.HttpService;
 import LMS.wsconsultarlicitacoessipac.services.LicitacoesSipacService;
 import LMS.wsconsultarlicitacoessipac.services.LogsService;
 import org.modelmapper.ModelMapper;
@@ -18,11 +17,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @Transactional
-@RequestMapping(value = "/consultar-licitacoes")
+@RequestMapping(value = "/licitacoes")
 public class LicitacoesSipacController {
-
-    @Autowired
-    private HttpService httpService;
 
     @Autowired
     private LicitacoesSipacService licitacoesSipacService;

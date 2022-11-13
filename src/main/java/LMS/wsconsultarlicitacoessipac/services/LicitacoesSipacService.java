@@ -28,9 +28,6 @@ public class LicitacoesSipacService {
     @Autowired
     private HttpService httpService;
 
-    @Autowired
-    private LogsService logsService;
-
     public List<LicitacoesSipac> getAllByDataConsulta (LocalDate data) throws Exception {
         try {
             return licitacoesSipacDao.findByDataConsulta(data);
