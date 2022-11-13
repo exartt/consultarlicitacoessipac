@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class LicitacoesSipacDto {
-    private Long id;
     private String codigoLicitacao;
     private String processo;
     private String status;
@@ -17,4 +16,9 @@ public class LicitacoesSipacDto {
     private LocalDate dataVigenciaInicial;
     private LocalDate dataVigenciaFinal;
     private String descricao;
+    private String urlVisualizar;
+    private String urlItensAta;
+    private String urlDownload;
+    private String urlProcessos;
+    private LocalDate dataConsulta;
 }

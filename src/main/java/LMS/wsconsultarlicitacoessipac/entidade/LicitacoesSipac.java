@@ -1,5 +1,6 @@
 package LMS.wsconsultarlicitacoessipac.entidade;
 
+import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -42,5 +43,7 @@ public class LicitacoesSipac extends AbstractEntity implements Serializable {
     private String urlProcessos;
     @Column(name = "lic_descricao")
     private String descricao;
+    @Column(name = "lic_data_consulta")
+    private LocalDate dataConsulta;
 
 }

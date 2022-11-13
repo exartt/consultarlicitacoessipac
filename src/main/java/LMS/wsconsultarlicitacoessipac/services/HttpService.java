@@ -25,15 +25,5 @@ public class HttpService {
     }
 
 //    DomElement domElement = page.querySelector("//*[@id=\"corpo\"]/table/tbody/tr[1]/td[7]/a[1]");
-    public HtmlTable criaTabela () throws Exception {
-        try {
-            HtmlElement pageByXPath = this.connectSipac();
-            return (HtmlTable) pageByXPath;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        final String caption = htmlTable.getCaptionText();
-        return null;
-    }
 
 }
