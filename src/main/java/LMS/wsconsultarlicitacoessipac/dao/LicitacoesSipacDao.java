@@ -10,4 +10,7 @@ public interface LicitacoesSipacDao extends JpaRepository<LicitacoesSipac, Long>
     List<LicitacoesSipac> findByDataConsulta (LocalDate dataConsulta);
     LicitacoesSipac findTopByCodigoLicitacao (String codigoLicitacao);
     Boolean existsByDataConsulta (LocalDate dataConsulta);
+    Boolean existsByCodigoLicitacao (String codigoLicitacao);
+
+    Boolean existsById (long id);
 }

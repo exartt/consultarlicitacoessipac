@@ -1,8 +1,11 @@
 package LMS.wsconsultarlicitacoessipac.services;
 
 import LMS.wsconsultarlicitacoessipac.dao.LicitacoesSipacDao;
+import LMS.wsconsultarlicitacoessipac.dto.LicitacaoLidaDto;
 import LMS.wsconsultarlicitacoessipac.dto.LicitacoesSipacDto;
 import LMS.wsconsultarlicitacoessipac.entidade.LicitacoesSipac;
+import LMS.wsconsultarlicitacoessipac.entidade.Logs;
+import LMS.wsconsultarlicitacoessipac.enums.TipoRequisicao;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
@@ -25,29 +28,102 @@ public class LicitacoesSipacService {
     @Autowired
     private HttpService httpService;
 
-    public List<LicitacoesSipac> getAllByDataConsulta (LocalDate data) {
-        return licitacoesSipacDao.findByDataConsulta(data);
-    }
+    @Autowired
+    private LogsService logsService;
 
-    public LicitacoesSipac getByCodigoLicitacao (String codigoLicitacao) {
-        return licitacoesSipacDao.findTopByCodigoLicitacao(codigoLicitacao);
+    public List<LicitacoesSipac> getAllByDataConsulta (LocalDate data) throws Exception {
+        try {
+            return licitacoesSipacDao.findByDataConsulta(data);
+        } catch (Exception e) {
+            throw new Exception("Não foi possível carregar a listagem de licitações do dia " + data+ ".");
+        }
     }
-    private Boolean isDadosPersistidos (LocalDate data) {
-        return licitacoesSipacDao.existsByDataConsulta(data);
+    public LicitacoesSipac getByCodigoLicitacao (String codigoLicitacao) throws Exception {
+        if (codigoLicitacao == null) {
+            throw  new Exception("Por favor, forneca um código de licitação válido.");
+        }
+        try {
+            return licitacoesSipacDao.findTopByCodigoLicitacao(codigoLicitacao);
+        } catch (Exception e) {
+            throw new Exception("Não foi encontrado a licitação com o código " + codigoLicitacao + ". Por favor verifique se o código fornecido é válido e tente novamente.");
+        }
     }
-    public void persistirDados(List<LicitacoesSipacDto> licitacoesSipacDtoList) throws Exception {
+    public void markAllAsLidoOuNaoLido (boolean markAll) throws Exception {
+        List<LicitacoesSipac> licitacoesSipacList = this.getAllByDataConsulta(LocalDate.now());
+        if (licitacoesSipacList == null) {
+            licitacoesSipacList = this.persistirDados(this.generateLicitacoesSipacDtoFromTable());
+        }
+        for(LicitacoesSipac licitacoesSipac : licitacoesSipacList) {
+            licitacoesSipac.setRegistroLido(markAll);
+        }
+    }
+    public void manyAsLidoOuNaoLido (List<LicitacaoLidaDto> licitacaoLidaDtoList) throws Exception {
+        for (LicitacaoLidaDto licitacaoLidaDto : licitacaoLidaDtoList) {
+            this.lidoOuNaoLido(licitacaoLidaDto);
+        }
+    }
+    private LicitacoesSipac getById (long id) throws Exception {
+        return licitacoesSipacDao.findById(id).orElseThrow(() -> new Exception("Não existe um registro com o id " + id));
+    }
+    public void lidoOuNaoLido (LicitacaoLidaDto licitacaoLidaDto) throws Exception {
+        if (!licitacoesSipacDao.existsByCodigoLicitacao(licitacaoLidaDto.getCodigoLicitacao())) {
+            this.persistirDados(this.generateLicitacoesSipacDtoFromTable());
+        }
+        LicitacoesSipac licitacoesSipac = this.getByCodigoLicitacao(licitacaoLidaDto.getCodigoLicitacao());
+        licitacoesSipac.setRegistroLido(licitacaoLidaDto.isReaded());
+    }
+    public void lidoOuNaoLidoPorId (LicitacaoLidaDto licitacaoLidaDto) throws Exception {
+        if (licitacoesSipacDao.existsById(licitacaoLidaDto.getId())) {
+            LicitacoesSipac licitacoesSipac = this.getById(licitacaoLidaDto.getId());
+            licitacoesSipac.setRegistroLido(licitacaoLidaDto.isReaded());
+        } else {
+            throw new Exception("Não existe registro com o id: " + licitacaoLidaDto.getId());
+        }
+    }
+    public List<LicitacoesSipac> persistirDados(List<LicitacoesSipacDto> licitacoesSipacDtoList) throws Exception {
         try {
             if (isDadosPersistidos(LocalDate.now())) {
-                this.atualizaDados(licitacoesSipacDtoList);
+                return this.atualizaDados(licitacoesSipacDtoList);
             } else {
-                this.saveAllLicitacoesSipacList(this.converterAllDtosEmEntidades(licitacoesSipacDtoList));
+                return this.saveAllLicitacoesSipacList(this.converterAllDtosEmEntidades(licitacoesSipacDtoList));
             }
         } catch (Exception e) {
             throw new Exception(e);
         }
     }
+    public List<LicitacoesSipacDto> generateLicitacoesSipacDtoFromTable () throws Exception {
+        HtmlElement pageSipac = httpService.connectSipac();
+        HtmlTable htmlTable = criaTabela(pageSipac);
+        List<LicitacoesSipacDto> licitacoesSipacDtoList = new ArrayList<>();
+        try {
+            for (int rowAtual = 1; rowAtual < htmlTable.getRows().size(); rowAtual++) {
+                List<String> celulas = new ArrayList<>();
+                for (final HtmlTableCell cell : htmlTable.getRows().get(rowAtual).getCells()) {
+                    celulas.add(cell.asNormalizedText());
+                }
+                celulas.remove(celulas.size() - 1);
+                this.getUrlsNaLinhaDaTabela(celulas, pageSipac, rowAtual);
+                licitacoesSipacDtoList.add(this.popularLicitacoesSipac(celulas));
+            }
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        return licitacoesSipacDtoList;
+    }
+    private Boolean isDadosPersistidos (LocalDate data) {
+        return licitacoesSipacDao.existsByDataConsulta(data);
+    }
+    private List<LicitacoesSipac> saveAllLicitacoesSipacList (List<LicitacoesSipac> licitacoesSipacList) {
+        return licitacoesSipacDao.saveAll(licitacoesSipacList);
+    }
+    private List<LicitacoesSipac> converterAllDtosEmEntidades (List<LicitacoesSipacDto> licitacoesSipacDtoList) {
+        ModelMapper modelMapper = new ModelMapper();
+        return licitacoesSipacDtoList.stream().map(a -> modelMapper.map(a, LicitacoesSipac.class)).collect(Collectors.toList());
+    }
 
-    private void atualizaDados (List<LicitacoesSipacDto> licitacoesSipacDtoList) {
+
+    private List<LicitacoesSipac> atualizaDados (List<LicitacoesSipacDto> licitacoesSipacDtoList) throws Exception {
+        List<LicitacoesSipac> licitacoesSipacList = new ArrayList<>();
         for (LicitacoesSipacDto licitacoesSipacDto : licitacoesSipacDtoList) {
             LicitacoesSipac licitacoesSipac = this.getByCodigoLicitacao(licitacoesSipacDto.getCodigoLicitacao());
             if (licitacoesSipac == null) {
@@ -63,15 +139,9 @@ public class LicitacoesSipacService {
             licitacoesSipac.setUrlDownload(licitacoesSipac.getUrlDownload());
             licitacoesSipac.setUrlProcessos(licitacoesSipac.getUrlProcessos());
             licitacoesSipac.setDescricao(licitacoesSipac.getDescricao());
-            licitacoesSipacDao.save(licitacoesSipac);
+            licitacoesSipacList.add(licitacoesSipacDao.save(licitacoesSipac));
         }
-    }
-    private void saveAllLicitacoesSipacList (List<LicitacoesSipac> licitacoesSipacList) {
-        licitacoesSipacDao.saveAll(licitacoesSipacList);
-    }
-    private List<LicitacoesSipac> converterAllDtosEmEntidades (List<LicitacoesSipacDto> licitacoesSipacDtoList) {
-        ModelMapper modelMapper = new ModelMapper();
-        return licitacoesSipacDtoList.stream().map(a -> modelMapper.map(a, LicitacoesSipac.class)).collect(Collectors.toList());
+        return licitacoesSipacList;
     }
     private LicitacoesSipacDto popularLicitacoesSipac (List<String> celulas) {
         LicitacoesSipacDto licitacoesSipacDto = new LicitacoesSipacDto();
@@ -93,32 +163,12 @@ public class LicitacoesSipacService {
         HtmlElement pageByXPath = pageSipac;
         return (HtmlTable) pageByXPath;
     }
-    public List<LicitacoesSipacDto> generateLicitacoesSipacDtoFromTable () throws Exception {
-        HtmlElement pageSipac = httpService.connectSipac();
-        HtmlTable htmlTable = criaTabela(pageSipac);
-        List<LicitacoesSipacDto> licitacoesSipacDtoList = new ArrayList<>();
-        try {
-            for (int rowAtual = 1; rowAtual < htmlTable.getRows().size(); rowAtual++) {
-                List<String> celulas = new ArrayList<>();
-                for (final HtmlTableCell cell : htmlTable.getRows().get(rowAtual).getCells()) {
-                    celulas.add(cell.asNormalizedText());
-                }
-                celulas.remove(celulas.size() - 1);
-                this.getUrlsNaLinhaDaTabela(celulas, pageSipac, rowAtual);
-                licitacoesSipacDtoList.add(this.popularLicitacoesSipac(celulas));
-            }
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-        return licitacoesSipacDtoList;
-    }
+
     private void getUrlsNaLinhaDaTabela (List<String> celulas, HtmlElement pageSipac, int rowAtual) {
         String urlSipac = "https://sig.ifsc.edu.br";
-        HtmlAnchor htmlUrlProcesso = pageSipac.getFirstByXPath("/html/body/div/div/div[2]/table/tbody/tr[" + rowAtual + "]/td[2]/a");
-        String urlToUseProcesso = urlSipac.concat(htmlUrlProcesso.getHrefAttribute());
-        celulas.add(urlToUseProcesso);
-        for (int i = 1; i <= 3; i++) {
-            HtmlAnchor htmlUrl = pageSipac.getFirstByXPath("/html/body/div/div/div[2]/table/tbody/tr[" + rowAtual + "]/td[7]/a[" + i +"]");
+        String[] urlTails = {"a", "a[1]", "a[2]", "a[3]"};
+        for(String tail : urlTails) {
+            HtmlAnchor htmlUrl = pageSipac.getFirstByXPath("/html/body/div/div/div[2]/table/tbody/tr[" + rowAtual + "]/td[7]/" + tail);
             String urlToUse = urlSipac.concat(htmlUrl.getHrefAttribute());
             celulas.add(urlToUse);
         }
