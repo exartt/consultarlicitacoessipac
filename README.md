@@ -9,7 +9,7 @@ Documentação, DDL para a geração do banco e modelagem.
 
 Essa API foi desenvolvida no intuito de coletar as informações das licitações fornecidas pela plataforma do sipac.
 
-Como a plataforma não oferece api para consultar as informações, o desenvolvimento foi idelizado e executado utilizando web scrapping.
+Como a plataforma não oferece api para consultar as informações, o desenvolvimento foi idelizado e executado utilizando web scraping.
 
 A API tem como funções retornar em json as informações da página, persistir os dados, atualizar o status de lido/não lido.
 
