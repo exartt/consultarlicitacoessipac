@@ -62,17 +62,19 @@ public class LicitacoesSipacService {
     private LicitacoesSipac getById (long id) throws Exception {
         return licitacoesSipacDao.findById(id).orElseThrow(() -> new Exception("Não existe um registro com o id " + id));
     }
-    public void lidoOuNaoLido (LicitacaoLidaDto licitacaoLidaDto) throws Exception {
+    public LicitacoesSipac lidoOuNaoLido (LicitacaoLidaDto licitacaoLidaDto) throws Exception {
         if (!licitacoesSipacDao.existsByCodigoLicitacao(licitacaoLidaDto.getCodigoLicitacao())) {
             this.persistirDados(this.generateLicitacoesSipacDtoFromTable());
         }
         LicitacoesSipac licitacoesSipac = this.getByCodigoLicitacao(licitacaoLidaDto.getCodigoLicitacao());
         licitacoesSipac.setRegistroLido(licitacaoLidaDto.isReaded());
+        return licitacoesSipac;
     }
-    public void lidoOuNaoLidoPorId (LicitacaoLidaDto licitacaoLidaDto) throws Exception {
+    public LicitacoesSipac lidoOuNaoLidoPorId (LicitacaoLidaDto licitacaoLidaDto) throws Exception {
         if (licitacoesSipacDao.existsById(licitacaoLidaDto.getId())) {
             LicitacoesSipac licitacoesSipac = this.getById(licitacaoLidaDto.getId());
             licitacoesSipac.setRegistroLido(licitacaoLidaDto.isReaded());
+            return licitacoesSipac;
         } else {
             throw new Exception("Não existe registro com o id: " + licitacaoLidaDto.getId());
         }

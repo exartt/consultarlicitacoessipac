@@ -51,20 +51,22 @@ public class LicitacoesSipacController {
     }
 
     @RequestMapping(value = "/mark-all", method = RequestMethod.GET)
-    public void markAllAsRead (boolean markAll) throws Exception {
+    public String markAllAsRead (boolean markAll) throws Exception {
         try {
             licitacoesSipacService.markAllAsLidoOuNaoLido(markAll);
             logsService.registrarRequest(TipoRequisicao.MarkAll, "Todas as licitações do dia foram marcadas como " + markAll + ".");
+            return "Operação efetuada com sucesso!";
         } catch (Exception e) {
             logsService.registrarRequest(TipoRequisicao.MarkAll, "ERROR! não foi possível marcar todas as licitações como " + markAll + ". " + e.getMessage());
             throw new RuntimeException("Ocorreu um erro inesperado durante a marcação das licitações. " + e.getMessage());
         }
     }
     @RequestMapping(value = "/mark-all/{markAll}", method = RequestMethod.PATCH)
-    public void markAllAsReadPatch (@PathVariable("markAll") boolean markAll) throws Exception {
+    public String markAllAsReadPatch (@PathVariable("markAll") boolean markAll) throws Exception {
         try {
             licitacoesSipacService.markAllAsLidoOuNaoLido(markAll);
             logsService.registrarRequest(TipoRequisicao.MarkAll, "Todas as licitações do dia foram marcadas como " + markAll + ".");
+            return "Operação efetuada com sucesso!";
         } catch (Exception e) {
             logsService.registrarRequest(TipoRequisicao.MarkAll, "ERROR! não foi possível marcar todas as licitações como " + markAll + ". " + e.getMessage());
             throw new RuntimeException("Ocorreu um erro inesperado durante a marcação das licitações. " + e.getMessage());
@@ -72,10 +74,12 @@ public class LicitacoesSipacController {
     }
 
     @RequestMapping(value = "/mark-one", method = RequestMethod.POST)
-    public void markASReadedOrUnreaded (@RequestBody LicitacaoLidaDto licitacaoLidaDto) throws Exception {
+    public LicitacoesSipacDto markASReadedOrUnreaded (@RequestBody LicitacaoLidaDto licitacaoLidaDto) throws Exception {
         try {
-            licitacoesSipacService.lidoOuNaoLido(licitacaoLidaDto);
+            ModelMapper modelMapper = new ModelMapper();
+            LicitacoesSipac licitacoesSipac = licitacoesSipacService.lidoOuNaoLido(licitacaoLidaDto);
             logsService.registrarRequest(TipoRequisicao.MarkOne, "A licitação " + licitacaoLidaDto.getCodigoLicitacao() + " foi marcada como " + licitacaoLidaDto.isReaded() + ".");
+            return modelMapper.map(licitacoesSipac, LicitacoesSipacDto.class);
         } catch (Exception e) {
             logsService.registrarRequest(TipoRequisicao.MarkOne, "ERROR! Não foi possível marcar a licitação " + licitacaoLidaDto.getCodigoLicitacao() + " como " + licitacaoLidaDto.isReaded() + ". " + e.getMessage());
             throw new RuntimeException("Ocorreu um erro inesperado durante a marcação das licitações. " + e.getMessage());
@@ -83,21 +87,24 @@ public class LicitacoesSipacController {
     }
 
     @RequestMapping(value = "/mark-one/{id}", method = RequestMethod.PATCH)
-    public void markASReadedOrUnreadedPatch (@PathVariable("id") long id, boolean readed) throws Exception {
+    public LicitacoesSipacDto markASReadedOrUnreadedPatch (@PathVariable("id") long id, boolean readed) throws Exception {
         try {
             LicitacaoLidaDto licitacaoLidaDto = new LicitacaoLidaDto(id, readed, null);
-            licitacoesSipacService.lidoOuNaoLidoPorId(licitacaoLidaDto);
+            ModelMapper modelMapper = new ModelMapper();
+            LicitacoesSipac licitacoesSipac = licitacoesSipacService.lidoOuNaoLidoPorId(licitacaoLidaDto);
             logsService.registrarRequest(TipoRequisicao.MarkOne, "A licitação de id " + licitacaoLidaDto.getId() + " foi marcada como " + licitacaoLidaDto.isReaded() + ".");
+            return modelMapper.map(licitacoesSipac, LicitacoesSipacDto.class);
         } catch (Exception e) {
             logsService.registrarRequest(TipoRequisicao.MarkOne, "ERROR! Não foi possível marcar a licitação de id " + id + " como " + readed + ". " + e.getMessage());
             throw new RuntimeException("Ocorreu um erro inesperado durante a marcação das licitações. " + e.getMessage());
         }
     }
     @RequestMapping(value = "/mark-many", method = RequestMethod.POST)
-    public void markManyAsReadedOrUnreaded (@RequestBody List<LicitacaoLidaDto> licitacoesToMark) throws Exception {
+    public String markManyAsReadedOrUnreaded (@RequestBody List<LicitacaoLidaDto> licitacoesToMark) throws Exception {
         try {
             licitacoesSipacService.manyAsLidoOuNaoLido(licitacoesToMark);
             logsService.registrarRequest(TipoRequisicao.MarkMany, "As licitações selecionadas foram marcadas com sucesso.");
+            return "Operação efetuada com sucesso!";
         } catch (Exception e) {
             logsService.registrarRequest(TipoRequisicao.MarkMany, "ERROR! Não foi possivel marcar as licitações selecionadas.");
             throw new RuntimeException("Ocorreu um erro inesperado durante a marcação das licitações. " + e.getMessage());
