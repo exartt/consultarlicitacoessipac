@@ -16,3 +16,12 @@ A API tem como funções retornar em json as informações da página, persistir
 As tecnologias utilizadas foram JAVA utilizando o framework spring boot e para o banco de dados foi utilizado o PostgreSQL.
 
 *O package war do Sistema se encontra gerado na pasta principal do sistema para necessidade de deploy.*
+
+---
+
+Requisitos:
+Obrigatório ter o JDK 11.
+
+Recomendação de IDE para execução:
+[INTELIJ](https://www.jetbrains.com/idea/download/)
+
