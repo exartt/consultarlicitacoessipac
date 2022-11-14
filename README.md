@@ -7,3 +7,12 @@ Documentação, DDL para a geração do banco e modelagem.
 
 ---
 
+Essa API foi desenvolvida no intuito de coletar as informações das licitações fornecidas pela plataforma do sipac.
+
+Como a plataforma não oferece api para consultar as informações, o desenvolvimento foi idelizado e executado utilizando web scrapping.
+
+A API tem como funções retornar em json as informações da página, persistir os dados, atualizar o status de lido/não lido.
+
+As tecnologias utilizadas foram JAVA utilizando o framework spring boot e para o banco de dados foi utilizado o PostgreSQL.
+
+*O package war do Sistema se encontra gerado na pasta principal do sistema para necessidade de deploy.*
