@@ -1,0 +1,15 @@
+LMS/wsconsultarlicitacoessipac/entidade/AbstractEntity$AbstractEntityListener.class
+LMS/wsconsultarlicitacoessipac/entidade/LicitacoesSipac.class
+LMS/wsconsultarlicitacoessipac/services/LicitacoesSipacService.class
+LMS/wsconsultarlicitacoessipac/services/HttpService.class
+LMS/wsconsultarlicitacoessipac/dao/LogsDao.class
+LMS/wsconsultarlicitacoessipac/enums/TipoRequisicao.class
+LMS/wsconsultarlicitacoessipac/services/LogsService.class
+LMS/wsconsultarlicitacoessipac/WsConsultarLicitacoesSipacApplication.class
+LMS/wsconsultarlicitacoessipac/dto/LicitacaoLidaDto.class
+LMS/wsconsultarlicitacoessipac/ServletInitializer.class
+LMS/wsconsultarlicitacoessipac/dto/LicitacoesSipacDto.class
+LMS/wsconsultarlicitacoessipac/controller/LicitacoesSipacController.class
+LMS/wsconsultarlicitacoessipac/entidade/Logs.class
+LMS/wsconsultarlicitacoessipac/entidade/AbstractEntity.class
+LMS/wsconsultarlicitacoessipac/dao/LicitacoesSipacDao.class

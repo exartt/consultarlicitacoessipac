@@ -1,0 +1,12 @@
+FROM flyway/flyway
+
+USER root
+RUN apt-get update && \
+    apt-get install -y postgresql-client && \
+    rm -rf /var/lib/apt/lists/* && \
+    adduser --disabled-password --gecos '' flyway
+
+RUN mkdir -p /app/reports && \
+    chown -R flyway:flyway /app/reports
+
+USER flyway

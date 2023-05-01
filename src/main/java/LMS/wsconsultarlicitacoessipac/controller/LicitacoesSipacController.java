@@ -38,7 +38,6 @@ public class LicitacoesSipacController {
             throw new RuntimeException("Ocorreu um erro inesperado na tentativa listar as licitações atuais. " + e.getMessage());
         }
     }
-
     @RequestMapping(value = "/get-licitacoes", method = RequestMethod.GET)
     public List<LicitacoesSipacDto> sendLicitacoes () throws Exception {
         try {
@@ -61,6 +60,7 @@ public class LicitacoesSipacController {
             throw new RuntimeException("Ocorreu um erro inesperado durante a marcação das licitações. " + e.getMessage());
         }
     }
+
     @RequestMapping(value = "/mark-all/{markAll}", method = RequestMethod.PATCH)
     public String markAllAsReadPatch (@PathVariable("markAll") boolean markAll) throws Exception {
         try {
@@ -85,7 +85,6 @@ public class LicitacoesSipacController {
             throw new RuntimeException("Ocorreu um erro inesperado durante a marcação das licitações. " + e.getMessage());
         }
     }
-
     @RequestMapping(value = "/mark-one/{id}", method = RequestMethod.PATCH)
     public LicitacoesSipacDto markASReadedOrUnreadedPatch (@PathVariable("id") long id, boolean readed) throws Exception {
         try {

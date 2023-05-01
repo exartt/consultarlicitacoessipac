@@ -1,0 +1,14 @@
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/dao/LicitacoesSipacDao.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/entidade/LicitacoesSipac.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/enums/TipoRequisicao.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/WsConsultarLicitacoesSipacApplication.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/services/LogsService.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/dto/LicitacoesSipacDto.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/entidade/Logs.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/ServletInitializer.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/dao/LogsDao.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/services/LicitacoesSipacService.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/dto/LicitacaoLidaDto.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/entidade/AbstractEntity.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/services/HttpService.java
+/home/leonardo/Documentos/trab_devops/src/main/java/LMS/wsconsultarlicitacoessipac/controller/LicitacoesSipacController.java

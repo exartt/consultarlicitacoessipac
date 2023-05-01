@@ -24,6 +24,4 @@ public class HttpService {
         return null;
     }
 
-//    DomElement domElement = page.querySelector("//*[@id=\"corpo\"]/table/tbody/tr[1]/td[7]/a[1]");
-
 }
